@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_email_password_login/home_page.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -8,12 +10,42 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  String? email, password;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  Future<void> createAccount() async {
+    try {
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Account Created Successfully")));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Weak Password")));
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Account Already exists.")));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/register.png'), fit: BoxFit.cover)),
+              image: const AssetImage('assets/register.png'),
+              fit: BoxFit.cover)),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -23,8 +55,8 @@ class _RegisterState extends State<Register> {
         body: Stack(
           children: [
             Container(
-                padding: EdgeInsets.only(left: 35),
-                child: Text(
+                padding: const EdgeInsets.only(left: 35),
+                child: const Text(
                   "Create\nAccount",
                   style: TextStyle(color: Colors.white, fontSize: 33),
                 )),
@@ -40,75 +72,86 @@ class _RegisterState extends State<Register> {
                       decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.black)),
+                              borderSide:
+                                  const BorderSide(color: Colors.black)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.white)),
+                              borderSide:
+                                  const BorderSide(color: Colors.white)),
                           fillColor: Colors.grey.shade100,
                           filled: true,
                           hintText: "Name",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.black)),
+                              borderSide:
+                                  const BorderSide(color: Colors.black)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.white)),
+                              borderSide:
+                                  const BorderSide(color: Colors.white)),
                           fillColor: Colors.grey.shade100,
                           filled: true,
                           hintText: "Email",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.black)),
+                              borderSide:
+                                  const BorderSide(color: Colors.black)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.white)),
+                              borderSide:
+                                  const BorderSide(color: Colors.white)),
                           fillColor: Colors.grey.shade100,
                           filled: true,
                           hintText: "Password",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           "Log In",
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 37, fontWeight: FontWeight.w700),
+                              fontSize: 37,
+                              fontWeight: FontWeight.w700),
                         ),
                         CircleAvatar(
                           radius: 30,
-                          backgroundColor: Color(0xff4c505b),
+                          backgroundColor: const Color(0xff4c505b),
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              createAccount();
+                            },
                             color: Colors.white,
-                            icon: Icon(Icons.arrow_forward),
+                            icon: const Icon(Icons.arrow_forward),
                           ),
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Row(
@@ -116,13 +159,12 @@ class _RegisterState extends State<Register> {
                       children: [
                         TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, "login");
+                              Navigator.pushNamed(context, "Login");
                             },
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.blueAccent),
+                            child: const Text(
+                              "Log In",
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.blueAccent),
                             )),
                       ],
                     ),
