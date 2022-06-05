@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -10,6 +12,35 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  var email = "";
+  var password = "";
+
+  userLogin() async {
+    try {
+      email = emailController.text;
+      password = passwordController.text;
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      Fluttertoast.showToast(
+          msg: "This is a Toast message",  // message
+          toastLength: Toast.LENGTH_SHORT, // length
+          gravity: ToastGravity.CENTER,    // location
+          timeInSecForIosWeb: 1,
+        // duration
+      );
+      Navigator.pushReplacementNamed(context, 'homepage');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Successfully Log In")));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("User Not Found")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,7 +78,7 @@ class _LoginState extends State<Login> {
                       height: 30,
                     ),
                     TextField(
-                      controller: emailController,
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                           fillColor: Colors.grey.shade100,
@@ -71,7 +102,10 @@ class _LoginState extends State<Login> {
                           radius: 30,
                           backgroundColor: Color(0xff4c505b),
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              userLogin();
+
+                            },
                             color: Colors.white,
                             icon: Icon(Icons.arrow_forward),
                           ),
@@ -83,7 +117,6 @@ class _LoginState extends State<Login> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                       children: [
                         TextButton(
                             onPressed: () {
@@ -92,8 +125,7 @@ class _LoginState extends State<Login> {
                             child: Text(
                               "Sign Up",
                               style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.blueAccent),
+                                  fontSize: 18, color: Colors.blueAccent),
                             )),
                         TextButton(
                             onPressed: () {},

@@ -23,7 +23,7 @@ class _RegisterState extends State<Register> {
       );
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Account Created Successfully")));
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.pushReplacementNamed(context,'Login');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
