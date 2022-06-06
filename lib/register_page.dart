@@ -159,7 +159,7 @@ class _RegisterState extends State<Register> {
                       children: [
                         TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, "Login");
+                              Navigator.pushReplacementNamed(context, "login");
                             },
                             child: const Text(
                               "Log In",

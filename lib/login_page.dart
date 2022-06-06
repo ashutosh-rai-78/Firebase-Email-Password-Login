@@ -23,13 +23,13 @@ class _LoginState extends State<Login> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email, password: password);
 
-      Fluttertoast.showToast(
+      /*Fluttertoast.showToast(
           msg: "This is a Toast message",  // message
           toastLength: Toast.LENGTH_SHORT, // length
           gravity: ToastGravity.CENTER,    // location
           timeInSecForIosWeb: 1,
         // duration
-      );
+      );*/
       Navigator.pushReplacementNamed(context, 'homepage');
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Successfully Log In")));
